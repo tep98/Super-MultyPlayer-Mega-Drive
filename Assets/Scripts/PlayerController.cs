@@ -1,13 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.TextCore.Text;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField, Range(0,10)] private float _speed = 1;
-    [SerializeField, Range(0, 50)] private float _gravity = 9.81f;
+    [SerializeField] private float _gravity = 9.81f;
     [SerializeField, Range(0,10)] private float _jumpHeight = 1;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundDistance;
+    [SerializeField] private LayerMask groundLayer;
+    private bool _isGrounded = false;
 
     private CharacterController controller;
     private Vector3 _moveDirection = Vector3.zero;
@@ -24,7 +25,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         //FALL
-        if (!controller.isGrounded)
+        _isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
+        if (!_isGrounded)
         {
             _moveDirection.y -= _gravity * Time.deltaTime;
         }
@@ -35,9 +37,16 @@ public class PlayerController : MonoBehaviour
 
 
         //JUMP
-        if (Input.GetButton("Jump") && controller.isGrounded)
+        if (Input.GetButton("Jump") && _isGrounded)
         {
-            _moveDirection.y = _jumpHeight;
+            if (isFlip)
+            {
+                _moveDirection.y = -_jumpHeight;
+            }
+            else
+            {
+                _moveDirection.y = _jumpHeight;
+            } 
         }
         else
         {
@@ -56,6 +65,8 @@ public class PlayerController : MonoBehaviour
     private void FlipGravity()
     {
         _gravity *= -1;
+        _moveDirection.y *= -1;
+
 
         if (isFlip)
         {
