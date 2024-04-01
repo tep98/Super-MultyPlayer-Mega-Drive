@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class CameraController : MonoBehaviour
+public class CameraController : NetworkBehaviour
 {
     [SerializeField, Range(0,10)] private float _sensivity = 1;
     [SerializeField] private float _maxAngle = 90;
@@ -11,8 +12,17 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (!isLocalPlayer)
+        {
+            gameObject.SetActive(false);
+            
+        } 
+        else
+        {
+            gameObject.SetActive(true);
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     private void Update()

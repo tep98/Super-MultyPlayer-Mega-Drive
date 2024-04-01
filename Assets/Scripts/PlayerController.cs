@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [SerializeField, Range(0,10)] private float _speed = 1;
     [SerializeField] private float _gravity = 9.81f;
@@ -24,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (!isLocalPlayer) return;
+
         //FALL
         _isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayer);
         if (!_isGrounded)
